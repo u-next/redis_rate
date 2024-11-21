@@ -6,7 +6,9 @@ import "github.com/redis/go-redis/v9"
 // https://github.com/rwz/redis-gcra/blob/master/vendor/perform_gcra_ratelimit.lua
 var allowN = redis.NewScript(`
 -- this script has side-effects, so it requires replicate commands mode
-redis.replicate_commands()
+if (redis.replicate_commands) then
+	redis.replicate_commands()
+end
 
 local rate_limit_key = KEYS[1]
 local burst = ARGV[1]
@@ -66,7 +68,9 @@ return {cost, remaining, tostring(retry_after), tostring(reset_after)}
 
 var allowAtMost = redis.NewScript(`
 -- this script has side-effects, so it requires replicate commands mode
-redis.replicate_commands()
+if (redis.replicate_commands) then
+	redis.replicate_commands()
+end
 
 local rate_limit_key = KEYS[1]
 local burst = ARGV[1]
